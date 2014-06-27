@@ -1,5 +1,5 @@
 import matplotlib.pyplot as plt
-import matplotlib.dates as mdates
+import time
 import datetime
 import csv
 
@@ -58,4 +58,4 @@ def graph(sheet, timespanStart, timespanEnd, delta):
 
 
 
-graph('DATA_1334.csv', [1, 0, 0], [1, 0, 0], [0, 0, 15])
+graph('DATA_1334.csv',)
