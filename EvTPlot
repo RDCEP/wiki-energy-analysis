@@ -20,25 +20,24 @@ def graph(sheet, timespanStart, timespanEnd, delta):
     file = open(sheet)
 
     power = []
+    x1 = []
 
     reader = csv.DictReader(file)
+    
+     for row in reader:
+        # extract row
+        utc = row['utc']
+        # parse into datetime
+        format_withtime = '%m/%d/%y %H:%M'
+        format_no_time = '%m/%d/%y'
+        try:
+            dt_struct = time.strptime(utc, format_withtime)
+        except ValueError:
+            dt_struct = time.strptime(utc, format_no_time)
+        dt = datetime.datetime.fromtimestamp(time.mktime(dt_struct))
 
-    a = timespanStart[0]
-    b = timespanStart[1]
-    c = timespanStart[2]
-
-
-    z = timespanEnd[0]
-    y = timespanEnd[1]
-    x = timespanEnd[2]
-
-    d = delta[0]
-    h = delta[1]
-    m = delta[2]
-
-
-    x1 = mdates.drange(datetime.datetime(2014, 4, a, b, c), datetime.datetime(2014, 5, z, y, x, ),
-                   datetime.timedelta(d, 0, 0, 0, m, h, 0))
+        x1.append(dt)
+        power.append(row['use'])
 
     for row in reader:
     # power[len(power):] = [row['use']]
