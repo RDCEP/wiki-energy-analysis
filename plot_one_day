@@ -1,0 +1,28 @@
+import csv
+import matplotlib.pyplot as plt
+import matplotlib.dates as mdates
+import datetime
+
+def make_a_graph(f,g):
+    file = open(f)
+    power = []
+    reader = csv.DictReader(file)
+    x1 = mdates.drange(datetime.datetime(2014, 4, 1), datetime.datetime(2014, 4, 2, 0, 0),
+                   datetime.timedelta(0, 0, 0, 0, 15))
+
+    t=97
+    for row in reader:
+        t=t-1
+        if t>0:
+            power[len(power):] = [row['use']]
+
+    fig = plt.figure()
+    plt.plot_date(x1, power, "r", xdate=True, ydate=False)
+    plt.title('Time vs. Energy Consumption for ' + g + ' in April 1')
+    plt.xlabel('Time (15 minute intervals)')
+    plt.ylabel('Energy consumed in kW/h')
+    fig.autofmt_xdate()
+    plt.show()
+
+
+make_a_graph('DATA_1334.csv', 'DATA_1334')
