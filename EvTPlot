@@ -1,0 +1,62 @@
+import matplotlib.pyplot as plt
+import matplotlib.dates as mdates
+import datetime
+import csv
+
+
+__author__ = 'Carah Alexander'
+
+
+# will plot data in an Time v Energy ScatterPlot
+
+def graph(sheet, timespanStart, timespanEnd, delta):
+    """
+    :param sheet: is the file to be graphed
+    :param timespanStart: when data measurements began (day, hour, min)
+    :param timespanEnd: when data measurements ended (day, hour, min)
+    :param delta: length of time between each data point (day, hour, min)
+    :return: Time v. Energy ScatterPlot
+    """
+    file = open(sheet)
+
+    power = []
+
+    reader = csv.DictReader(file)
+
+    a = timespanStart[0]
+    b = timespanStart[1]
+    c = timespanStart[2]
+
+
+    z = timespanEnd[0]
+    y = timespanEnd[1]
+    x = timespanEnd[2]
+
+    d = delta[0]
+    h = delta[1]
+    m = delta[2]
+
+
+    x1 = mdates.drange(datetime.datetime(2014, 4, a, b, c), datetime.datetime(2014, 5, z, y, x, ),
+                   datetime.timedelta(d, 0, 0, 0, m, h, 0))
+
+    for row in reader:
+    # power[len(power):] = [row['use']]
+        power.append(row['use'])
+
+    print(len(power))
+    print(len(x1))
+
+    fig = plt.figure()
+    plt.plot_date(x1, power, "ro", xdate=True, ydate=False)
+
+    plt.title('Time vs. Energy Consumption for' + file.name)
+    plt.xlabel('Time (15 minute intervals)')
+    plt.ylabel('Energy consumed in kW/h')
+
+    fig.autofmt_xdate()
+    plt.show()
+
+
+
+graph('DATA_1334.csv', [1, 0, 0], [1, 0, 0], [0, 0, 15])
