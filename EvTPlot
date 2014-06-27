@@ -4,8 +4,6 @@ import datetime
 import csv
 
 
-__author__ = 'Carah Alexander'
-
 
 # will plot data in an Time v Energy ScatterPlot
 
