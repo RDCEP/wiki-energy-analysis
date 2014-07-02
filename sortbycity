@@ -1,0 +1,33 @@
+import csv
+
+# sorts DEC files by city
+
+loc = open('cities.csv')
+reader = csv.DictReader(loc)
+
+f = open('bycity.csv', 'w')
+writer = csv.DictWriter(f, ['city', 'dataid'])
+
+
+
+rows = []
+for row in reader:
+    rows.append(row)
+
+
+# rows = [row for row in reader]
+
+def get_city(dictionary):
+    return dictionary['city']
+
+# rows.sort(key=lambda row: row['city'])
+
+rows.sort(key=get_city)
+
+
+
+#for row in rows:
+    #print(row)
+
+writer.writeheader()
+writer.writerows(rows)
