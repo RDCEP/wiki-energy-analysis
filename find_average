@@ -1,0 +1,32 @@
+import csv
+import os
+
+k = os.listdir('april_2014')
+average_list = []
+
+def step1(t):
+
+    list = []
+    total = 0.0
+
+    for file in k:
+        f = open('april_2014/' + file, 'rU')
+        r = csv.DictReader(f)
+
+        rows = [row for row in r]
+
+        list.append(rows[t]['use'])
+
+    for item in list:
+        total += float(item)
+
+    x = total/len(list)
+    average_list.append(round(x,3))
+
+#how do I find number of rows?
+for i in range(96):
+    step1(i)
+
+
+print(average_list)
+print(len(average_list))
