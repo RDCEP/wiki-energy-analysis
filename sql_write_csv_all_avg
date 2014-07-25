@@ -18,8 +18,6 @@ df_all_avg = df.resample('15T', how='mean')
 
 df_all_avg = df_all_avg.tz_localize('UTC').tz_convert('US/Central')
 
-df_all_avg.index = pd.DatetimeIndex([i.replace(tzinfo=None) for i in df_all_avg.index])
-
-df_all_avg.index.names = ['time']
+df_all_avg.index = pd.MultiIndex.from_arrays([df_all_avg.index.date, df_all_avg.index.time], names=['date','time'])
 
 df_all_avg.to_csv('all_avg.csv')
