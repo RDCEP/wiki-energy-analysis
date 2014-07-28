@@ -21,3 +21,10 @@ df_all_avg = df_all_avg.tz_localize('UTC').tz_convert('US/Central')
 df_all_avg.index = pd.MultiIndex.from_arrays([df_all_avg.index.date, df_all_avg.index.time], names=['date','time'])
 
 df_all_avg.to_csv('all_avg.csv')
+
+#don't split time/date
+#df_all_avg.index = pd.DatetimeIndex([i.replace(tzinfo=None) for i in df_all_avg.index])
+
+#df_all_avg.index.name = 'datetime'
+
+#df_all_avg.to_csv('all_avg_dt.csv')
