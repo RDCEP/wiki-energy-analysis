@@ -1,0 +1,51 @@
+import os
+import pandas as pd
+import MySQLdb as sqd
+import pandas.io.sql as sql
+import matplotlib.pyplot as plt
+
+os.chdir('/Users/durango/PycharmProjects/Energy Project')
+mydb = sqd.connect(host = '127.0.0.1', user = 'root', db = 'rdcep_amanda')
+cur = mydb.cursor()
+
+def make_df(source, month, house_id):
+    if house_id == 'none':
+        df = sql.read_frame('select datetime, '+source+' from grouped_columns where '+source+' > 0 '
+                        'and datetime between "'+month+'-01 00:00:00" and "'+month+'-31 23:45:00"',
+                        mydb, parse_dates = ['datetime'], index_col = 'datetime')
+                        
+    else:
+        df = sql.read_frame('select datetime, '+source+' from grouped_columns where house_id= "'+house_id+'" and '+source+' > 0 and datetime between "'+month+'-01 00:00:00" and "'+month+'-30 23:45:00"',mydb, parse_dates = ['datetime'], index_col = 'datetime')
+    df = df.resample('1h', how='mean')
+    df.index = df.index.time
+    df = df.groupby(df.index).mean()
+    df.index = range(0,24)
+    return df
+
+def plot_area(month, house_id):
+
+    #write empty dataframe with time index
+    df = pd.DataFrame(index= range(0,24))
+    
+    #sources = ['lights_plugs', 'furnace', 'refrigerator',  'waterheater', 'subpanel', 'drye', 'air', 'pool']
+    sources = ['bathroom', 'office', 'bedroom', 'garage', 'utilityroom', 'livingroom', 'kitchen']
+    
+    for source in sources:
+        df = df.join(make_df(source, month, house_id))
+    
+    my_colors = ([.4,1,0],[.059,.439,0],[1,0,0],[.09,.706,.694],[.686,0,.698],[.698,.706,.027],[0,0,0],[0,0,1])
+    #my_colors = ([.059,.439,0],[1,0,0],[.09,.706,.694],[0,0,0],[.698,.706,.027])
+    
+    plot = df.plot(kind='area', stacked=True, figsize = (12,8), color=my_colors)
+    
+    plot.set_ylabel('Energy Consumption in kW/h', fontsize = 14)
+    plot.set_xlabel('Hour of Day', fontsize = 14)
+    
+    if house_id == 'none':
+        plot.set_title('Energy Consumption by Room in ' +month, fontsize = 16)
+        plt.savefig('/Users/durango/Desktop/RDCEP_Energy/stacked_area_plots/room_' + month, dpi=100)
+    else:
+        plot.set_title('Energy Consumption by Room in ' +month+ ' house_id='+house_id, fontsize = 16)
+        plt.savefig('/Users/durango/Desktop/RDCEP_Energy/stacked_area_plots/room_' + month + '_' + house_id, dpi=100)
+   
+plot_area('2013-05', 'none')
