@@ -1,7 +1,5 @@
 # -*- coding: utf-8 -*-
-# <nbformat>3.0</nbformat>
-
-# <codecell>
+#plot average weekday, average Saturday, and average Sunday on same plot
 
 import os
 import pandas as pd
@@ -9,13 +7,11 @@ import MySQLdb as sqd
 import pandas.io.sql as sql
 import matplotlib.pyplot as plt
 
-
+#set up database connection
 os.chdir('/Users/durango/PycharmProjects/Energy Project')
 mydb = sqd.connect(host = '127.0.0.1', user = 'root', db = 'rdcep_amanda')
-cur = mydb.cursor()
 
-# <codecell>
-
+#create dataframes for each day of week
 df_sunday = sql.read_frame('select * from all_avg_dt where dayname(datetime) = "Sunday" and datetime between "2013-04-01" and "2014-04-30"',
                     mydb, parse_dates = ['datetime'], index_col = ['datetime'])
 df_monday = sql.read_frame('select * from all_avg_dt where dayname(datetime) = "Monday" and datetime between "2013-04-01" and "2014-04-30"',
@@ -31,8 +27,7 @@ df_friday = sql.read_frame('select * from all_avg_dt where dayname(datetime) = "
 df_saturday = sql.read_frame('select * from all_avg_dt where dayname(datetime) = "Saturday" and datetime between "2013-04-01" and "2014-04-30"',
                     mydb, parse_dates = ['datetime'], index_col = ['datetime'])
 
-# <codecell>
-
+#convert values to floats
 df_sunday[['total_energy']] = df_sunday[['total_energy']].astype(float)
 df_monday[['total_energy']] = df_monday[['total_energy']].astype(float)
 df_tuesday[['total_energy']] = df_tuesday[['total_energy']].astype(float)
@@ -41,31 +36,28 @@ df_thursday[['total_energy']] = df_thursday[['total_energy']].astype(float)
 df_friday[['total_energy']] = df_friday[['total_energy']].astype(float)
 df_saturday[['total_energy']] = df_saturday[['total_energy']].astype(float)
 
-# <codecell>
-
+#create weekday dataframe
 df_weekday = df_monday.append(df_tuesday.append(df_wednesday.append(df_thursday.append(df_friday))))
 
-# <codecell>
-
+#get the average for each 15min interval
 df_weekday = df_weekday.groupby(df_weekday.index.time).mean()
 df_sunday = df_sunday.groupby(df_sunday.index.time).mean()
 df_saturday = df_saturday.groupby(df_saturday.index.time).mean()
 
-# <codecell>
-
+#rename columns to reflect what they show
 df_weekday.columns = ['weekday']
 df_saturday.columns = ['Saturday']
 df_sunday.columns = ['Sunday']
 
-# <codecell>
-
+#join the dataframes into one dataframe
 df = df_weekday.join([df_saturday, df_sunday])
 
-# <codecell>
-
+#make the plot
 plot = df.plot(figsize = (12,8))
 plot.set_title('Time vs. Avg Daily Energy Consumption', fontsize = 18)
 plot.set_ylabel('Energy Consumption in kW/h', fontsize = 14)
 plot.set_xlabel('time', fontsize = 14)
 plot.legend(shadow = True, fontsize = 14)
 plt.savefig('/Users/durango/Desktop/RDCEP_Energy/TUE in April',dpi=100)
+
+

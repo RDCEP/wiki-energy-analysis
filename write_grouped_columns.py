@@ -1,16 +1,20 @@
+# -*- coding: utf-8 -*-
+#write csv that groups together similar columns
+
 import os
 import pandas as pd
-import numpy as np
 import MySQLdb as sqd
 import pandas.io.sql as sql
-import matplotlib.pyplot as plt
 
+
+#set up directory and database connection
 os.chdir('/Users/durango/PycharmProjects/Energy Project')
 mydb = sqd.connect(host = '127.0.0.1', user = 'root', db = 'rdcep_amanda')
-cur = mydb.cursor()
 
-
+#create empty dataframe
 df_grouped = pd.DataFrame()
+
+#write new grouped columns
 df_grouped['house_id'] = df['house_id']
 df_grouped['total_energy'] = df['total_energy']
 df_grouped['air'] = df['air1'] + df['air2'] + df['air3']
@@ -48,5 +52,6 @@ df_grouped['unknown'] = df['unknown1'] + df['unknown2'] + df['unknown3'] + df['u
 df_grouped['waterheater'] = df['waterheater1'] + df['waterheater2']
 df_grouped['winecooler'] = df['winecooler1']
 
-
+#write dataframe to csv
 df_grouped.to_csv('grouped_columns.csv')
+
